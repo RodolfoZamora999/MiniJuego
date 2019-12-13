@@ -1,5 +1,6 @@
 package logica_juego;
 
+import Usuario.GuardarPuntuacion;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -21,6 +22,7 @@ public class PanelArena extends JPanel
     private final JFrame context;
     private JLabel lblPuntuacion, lblMateria;
     private byte puntuacion;
+    private Cronometro cronometro;
     private JButton btnRegresar;
     private Personaje personaje;
     private Nota[] notas; 
@@ -29,13 +31,13 @@ public class PanelArena extends JPanel
     private ScheduledExecutorService controlChuy;
     private Fondo fondo;
     
-    
     public PanelArena(JFrame context)
     {
         super();
         this.context = context;
         initComponents();  
         iniciarObstaculos();
+        this.cronometro.iniciarContador();
     }
     
     /**
@@ -74,6 +76,11 @@ public class PanelArena extends JPanel
         this.lblMateria.setForeground(new Color(10, 10, 200));
         this.add(this.lblMateria);
         
+        //Se integra el componente de cronometro
+        this.cronometro = new Cronometro(this, 1);
+        this.cronometro.setLocation(360, 20);
+        this.add(this.cronometro);
+        
         //Se integran los componentes al panel
         this.btnRegresar = new JButton();
         this.btnRegresar.setBackground(new Color(250, 0, 0));
@@ -88,6 +95,8 @@ public class PanelArena extends JPanel
             //Apagar los ThreadPools
             this.controlNotas.shutdownNow();
             this.controlChuy.shutdownNow();
+            //Apagar el contador
+            this.cronometro.detenerContador();
             //Regresar al panel de inicio
             PanelPrincipal panel = new PanelPrincipal(context);
             context.remove(this);
@@ -148,18 +157,43 @@ public class PanelArena extends JPanel
     }
     
     
-    
+    /**
+     * Método que sirve para resetear la puntiacón de manera externa.
+     */
     public synchronized void resetearPuntuacion()
     {
-        this.puntuacion = 0;
+        this.puntuacion -= 10;
+        
+        if(this.puntuacion < 0)
+            puntuacion = 0;
+
         this.lblPuntuacion.setText(this.puntuacion+"/100");
     }
     
+    /**
+     * Método que sirve para incrementar la puntuación de manera externa.
+     */
     public synchronized void incrementarPuntuacion()
     {
         this.puntuacion++;
         this.lblPuntuacion.setText(this.puntuacion+"/100");
     }
- 
-
+    
+    /**
+     * Método que sirve para finalizar la partida. 
+     * Bloquea los hilos de los obstaculos y del personaje.
+     */
+    public void detenerPartida()
+    {
+        //Detiene los hilos de los objetos
+        this.controlNotas.shutdownNow();
+        this.controlChuy.shutdownNow();
+        this.personaje.detenerPersonaje();
+        
+        GuardarPuntuacion panel = new GuardarPuntuacion(context, puntuacion, 1);
+        context.remove(this);
+        context.add(panel);
+        context.revalidate();
+        context.repaint();  
+    }
 }

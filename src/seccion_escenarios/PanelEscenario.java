@@ -40,7 +40,7 @@ public class PanelEscenario extends JPanel
         //Propiedades del panel
         this.setSize(1280, 720);
         this.setLocation(0, 0);
-        this.setBackground(new Color(43, 81, 169)); 
+        this.setBackground(new Color(64, 29, 118));
         this.setLayout(null);
         
         this.lblTexto = new JLabel();

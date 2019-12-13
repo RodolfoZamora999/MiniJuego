@@ -41,7 +41,7 @@ public class PanelPersonajes extends JPanel
         this.setSize(1280, 720);
         this.setLocation(0, 0);
         this.setLayout(null);
-        this.setBackground(new Color(43, 81, 169));
+        this.setBackground(new Color(64, 29, 118));
         
         this.lblTexto = new JLabel();
         this.lblTexto.setText("<html>Selecciona un personaje para continuar</html>");

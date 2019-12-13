@@ -296,7 +296,17 @@ public class Personaje extends JLabel
         graphics.fillOval(50, 160, 30, 20);
     }
     
-    
-    
-    
+    /**
+     * Metodo publico que sirve para detener la ejecución del hilo del personaje.
+     */
+    public void detenerPersonaje()
+    {
+        //Detiene el hilo del desplazamiento
+        if(this.threadDesplazamiento != null)
+            this.threadDesplazamiento.stop();
+        
+        //Detiene el hilo del salto
+        if(this.threadSalto != null)
+            this.threadSalto.stop();
+    }
 }
